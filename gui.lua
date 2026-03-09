@@ -185,4 +185,27 @@ MoveTab:CreateSlider({
     Callback = function(v) _G.CBv1.Settings.Movement.SpeedValue = v end
 })
 
+-- ==================== SILENT AIM TAB ====================
+local SilentTab = Window:CreateTab("Silent Aim", 4483362458)
+
+SilentTab:CreateToggle({
+    Name = "Enable Silent Aim",
+    CurrentValue = _G.CBv1.Settings.SilentAim.Enabled,
+    Callback = function(v) _G.CBv1.Settings.SilentAim.Enabled = v end
+})
+
+SilentTab:CreateToggle({
+    Name = "Team Check",
+    CurrentValue = _G.CBv1.Settings.SilentAim.TeamCheck,
+    Callback = function(v) _G.CBv1.Settings.SilentAim.TeamCheck = v end
+})
+
+SilentTab:CreateSlider({
+    Name = "Hitbox Size",
+    Range = {5, 30},
+    Increment = 1,
+    CurrentValue = _G.CBv1.Settings.SilentAim.Size,
+    Callback = function(v) _G.CBv1.Settings.SilentAim.Size = v end
+})
+
 print("✅ [CBv1] GUI loaded")
