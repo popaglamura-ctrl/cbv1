@@ -40,10 +40,16 @@ _G.CBv1 = {
             AttachShift = 1
         },
         Aimbot = {
-            Enabled = false,
-            FOV = 60,
-            Smooth = 0.03,
-            TeamCheck = true
+        Enabled = false,
+        FOV = 60,
+        Smooth = 0.03,
+        TeamCheck = true
+    },
+    SilentAim = {
+        Enabled = false,
+        TeamCheck = true,
+        Size = 13
+    
         },
         Movement = {
             InfiniteJump = false,
