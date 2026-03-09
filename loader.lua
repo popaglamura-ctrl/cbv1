@@ -3,12 +3,16 @@
    Автор: Fox & Jack
 --]]
 
--- Проверка поддержки игры (ЗАМЕНИ НА РЕАЛЬНЫЙ GAMEID)
-local SUPPORTED_GAMES = {
-    [301549746] = true,  -- Counter Blox (временно)
+-- Проверяем PlaceId (более стабильно, чем GameId)
+local SUPPORTED_PLACES = {
+    [301549746] = true,  -- Основной Counter Blox
+    [1480424328] = true, -- Competitive
+    [1869597719] = true, -- Deathmatch
+    [5325113759] = true, -- Trading
+    [115797356] = true,  -- UGC (твой случай)
 }
 
-if not SUPPORTED_GAMES[game.GameId] then
+if not SUPPORTED_PLACES[game.PlaceId] then
     game.Players.LocalPlayer:Kick("Game not supported!")
     return
 end
