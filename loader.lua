@@ -5,7 +5,7 @@
 
 -- Проверка поддержки игры (ЗАМЕНИ НА РЕАЛЬНЫЙ GAMEID)
 local SUPPORTED_GAMES = {
-    [292439477] = true,  -- Counter Blox (временно)
+    [301549746] = true,  -- Counter Blox (временно)
 }
 
 if not SUPPORTED_GAMES[game.GameId] then
