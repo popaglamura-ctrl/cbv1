@@ -2,7 +2,14 @@
    CounterBlox v1 - ESP
 --]]
 
--- Проверяем, не загружен ли уже ESP
+print("✅ [CBv1] Esp loading...")
+
+-- Проверяем, что _G.CBv1 существует
+if not _G.CBv1 then
+    print("❌ [CBv1] _G.CBv1 не найден!")
+    return
+end
+
 if _G.CBv1.Loaded.Esp then return end
 _G.CBv1.Loaded.Esp = true
 
@@ -10,6 +17,8 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
+
+print("✅ [CBv1] Esp services loaded")
 
 local Esp = {
     Enabled = false,
@@ -31,6 +40,8 @@ local Esp = {
     Thickness = 1,
     AttachShift = 1
 }
+
+print("✅ [CBv1] Esp object created")
 
 -- Функция для создания Drawing объектов
 local function Draw(obj, props)
@@ -81,7 +92,7 @@ function Esp:Add(plr)
             Color = self:GetColor(plr),
             Transparency = 1,
             Filled = false,
-            Visible = self.Enabled and self.Boxes
+            Visible = false
         })
         
         -- Имя
@@ -91,7 +102,7 @@ function Esp:Add(plr)
             Center = true,
             Outline = true,
             Size = 16,
-            Visible = self.Enabled and self.ShowInfo and self.Info.Name
+            Visible = false
         })
         
         -- Здоровье
@@ -100,7 +111,7 @@ function Esp:Add(plr)
             Center = true,
             Outline = true,
             Size = 14,
-            Visible = self.Enabled and self.ShowInfo and self.Info.Health
+            Visible = false
         })
         
         -- Дистанция
@@ -109,7 +120,7 @@ function Esp:Add(plr)
             Center = true,
             Outline = true,
             Size = 14,
-            Visible = self.Enabled and self.ShowInfo and self.Info.Distance
+            Visible = false
         })
         
         -- Трейсер
@@ -117,10 +128,11 @@ function Esp:Add(plr)
             Thickness = self.Thickness,
             Color = self:GetColor(plr),
             Transparency = 1,
-            Visible = self.Enabled and self.Tracers
+            Visible = false
         })
         
         self.Objects[plr] = box
+        print("✅ [CBv1] ESP added for", plr.Name)
         
         -- Автоудаление при смерти
         char.AncestryChanged:Connect(function()
@@ -298,6 +310,14 @@ RunService.RenderStepped:Connect(function()
         Esp.Info.Health = _G.CBv1.Settings.ESP.Health
         Esp.Info.Distance = _G.CBv1.Settings.ESP.Distance
         Esp.EnemyColor = _G.CBv1.Settings.ESP.BoxColor
+    else
+        -- Если настроек нет, включаем тестовый режим
+        Esp.Enabled = true
+        Esp.Boxes = true
+        Esp.ShowTeam = true
+        Esp.Info.Name = true
+        Esp.Info.Health = true
+        Esp.Info.Distance = true
     end
     
     for plr, _ in pairs(Esp.Objects) do
