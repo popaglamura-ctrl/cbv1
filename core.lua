@@ -2,15 +2,20 @@
    CounterBlox v1 - Core
 --]]
 
+-- Защита от повторной загрузки
 if _G.CBv1_Loaded then return end
 _G.CBv1_Loaded = true
 
+print("✅ [CBv1] Core loaded - start")
+
+-- Сервисы
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Camera = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
 
+-- Глобальные настройки
 _G.CBv1 = {
     Version = "1.0",
     Loaded = {},
@@ -40,4 +45,6 @@ _G.CBv1 = {
     }
 }
 
-print("✅ [CBv1] Core loaded")
+print("✅ [CBv1] Core loaded - end")
+print("CBv1 создан:", _G.CBv1 ~= nil)
+print("ESP настройки:", _G.CBv1.Settings.ESP ~= nil)
