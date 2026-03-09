@@ -1,5 +1,5 @@
 --[[
-   CounterBlox v1 - ESP
+   CounterBlox v1 - ESP (Hexagon стиль)
 --]]
 
 print("✅ [CBv1] Esp loading...")
@@ -31,6 +31,7 @@ local Esp = {
     Info = {
         Name = true,
         Health = true,
+        Weapons = false,
         Distance = true
     },
     Objects = {},
@@ -38,10 +39,9 @@ local Esp = {
     BoxSize = Vector3.new(4, 6, 0),
     BoxShift = CFrame.new(0, -1.5, 0),
     Thickness = 1,
-    AttachShift = 1
+    AttachShift = 1,
+    UseTeamColor = false
 }
-
-print("✅ [CBv1] Esp object created")
 
 -- Функция для создания Drawing объектов
 local function Draw(obj, props)
@@ -62,6 +62,13 @@ end
 -- Получение цвета для игрока
 function Esp:GetColor(plr)
     if not plr then return self.EnemyColor end
+    
+    if self.UseTeamColor then
+        if plr.Team then
+            return plr.Team.TeamColor.Color
+        end
+    end
+    
     if self:IsTeamMate(plr) and self.ShowTeam then
         return self.TeamColor
     else
@@ -117,6 +124,15 @@ function Esp:Add(plr)
         -- Дистанция
         box.Components.Distance = Draw("Text", {
             Color = Color3.fromRGB(200, 200, 200),
+            Center = true,
+            Outline = true,
+            Size = 14,
+            Visible = false
+        })
+        
+        -- Оружие
+        box.Components.Weapons = Draw("Text", {
+            Color = Color3.fromRGB(255, 255, 0),
             Center = true,
             Outline = true,
             Size = 14,
@@ -194,14 +210,15 @@ function Esp:Update(plr)
         cf = CFrame.new(cf.p, Camera.CFrame.p)
     end
     
+    local shift = CFrame.new(0, -1.5 + self.BoxShift, 0)
     local size = self.BoxSize
     local locs = {
-        TopLeft = cf * self.BoxShift * CFrame.new(size.X/2, size.Y/2, 0),
-        TopRight = cf * self.BoxShift * CFrame.new(-size.X/2, size.Y/2, 0),
-        BottomLeft = cf * self.BoxShift * CFrame.new(size.X/2, -size.Y/2, 0),
-        BottomRight = cf * self.BoxShift * CFrame.new(-size.X/2, -size.Y/2, 0),
-        TagPos = cf * self.BoxShift * CFrame.new(0, size.Y/2, 0),
-        Torso = cf * self.BoxShift
+        TopLeft = cf * shift * CFrame.new(size.X/2, size.Y/2, 0),
+        TopRight = cf * shift * CFrame.new(-size.X/2, size.Y/2, 0),
+        BottomLeft = cf * shift * CFrame.new(size.X/2, -size.Y/2, 0),
+        BottomRight = cf * shift * CFrame.new(-size.X/2, -size.Y/2, 0),
+        TagPos = cf * shift * CFrame.new(0, size.Y/2, 0),
+        Torso = cf * shift
     }
     
     -- Отрисовка бокса
@@ -214,6 +231,7 @@ function Esp:Update(plr)
         if box.Components.Quad then
             if v1 or v2 or v3 or v4 then
                 box.Components.Quad.Visible = true
+                box.Components.Quad.Thickness = self.Thickness
                 box.Components.Quad.PointA = Vector2.new(tr.X, tr.Y)
                 box.Components.Quad.PointB = Vector2.new(tl.X, tl.Y)
                 box.Components.Quad.PointC = Vector2.new(bl.X, bl.Y)
@@ -245,6 +263,21 @@ function Esp:Update(plr)
                 box.Components.Distance.Visible = false
             end
             
+            if self.Info.Weapons then
+                local weapon = char:FindFirstChild("EquippedTool")
+                if weapon then
+                    box.Components.Weapons.Visible = true
+                    box.Components.Weapons.Position = Vector2.new(tagPos.X, tagPos.Y - offset)
+                    box.Components.Weapons.Text = "[" .. tostring(weapon.Value) .. "]"
+                    box.Components.Weapons.Color = Color3.fromRGB(255, 255, 0)
+                    offset = offset + 14
+                else
+                    box.Components.Weapons.Visible = false
+                end
+            else
+                box.Components.Weapons.Visible = false
+            end
+            
             if self.Info.Health then
                 box.Components.Health.Visible = true
                 box.Components.Health.Position = Vector2.new(tagPos.X, tagPos.Y - offset)
@@ -266,8 +299,14 @@ function Esp:Update(plr)
         else
             box.Components.Name.Visible = false
             box.Components.Health.Visible = false
+            box.Components.Weapons.Visible = false
             box.Components.Distance.Visible = false
         end
+    else
+        box.Components.Name.Visible = false
+        box.Components.Health.Visible = false
+        box.Components.Weapons.Visible = false
+        box.Components.Distance.Visible = false
     end
     
     -- Отрисовка трейсеров
@@ -275,6 +314,7 @@ function Esp:Update(plr)
         local torsoPos, v6 = Camera:WorldToViewportPoint(locs.Torso.p)
         if v6 then
             box.Components.Tracer.Visible = true
+            box.Components.Tracer.Thickness = self.Thickness
             box.Components.Tracer.From = Vector2.new(torsoPos.X, torsoPos.Y)
             box.Components.Tracer.To = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/self.AttachShift)
             box.Components.Tracer.Color = color
@@ -303,21 +343,26 @@ end)
 RunService.RenderStepped:Connect(function()
     -- Загружаем настройки из _G.CBv1
     if _G.CBv1 and _G.CBv1.Settings and _G.CBv1.Settings.ESP then
-        Esp.Enabled = _G.CBv1.Settings.ESP.Enabled
-        Esp.Boxes = _G.CBv1.Settings.ESP.Box
-        Esp.ShowTeam = _G.CBv1.Settings.ESP.TeamCheck
-        Esp.Info.Name = _G.CBv1.Settings.ESP.Name
-        Esp.Info.Health = _G.CBv1.Settings.ESP.Health
-        Esp.Info.Distance = _G.CBv1.Settings.ESP.Distance
-        Esp.EnemyColor = _G.CBv1.Settings.ESP.BoxColor
+        local s = _G.CBv1.Settings.ESP
+        
+        Esp.Enabled = s.Enabled
+        Esp.Boxes = s.Box
+        Esp.ShowTeam = s.ShowTeam
+        Esp.Tracers = s.Tracers
+        Esp.UseTeamColor = s.UseTeamColor
+        Esp.TeamColor = s.TeamColor
+        Esp.EnemyColor = s.BoxColor
+        Esp.FaceCamera = s.FaceCamera
+        Esp.BoxShift = s.BoxShift
+        Esp.Thickness = s.Thickness
+        Esp.AttachShift = s.AttachShift
+        Esp.Info.Name = s.Name
+        Esp.Info.Health = s.Health
+        Esp.Info.Distance = s.Distance
+        Esp.Info.Weapons = s.Weapons
     else
-        -- Если настроек нет, включаем тестовый режим
-        Esp.Enabled = true
-        Esp.Boxes = true
-        Esp.ShowTeam = true
-        Esp.Info.Name = true
-        Esp.Info.Health = true
-        Esp.Info.Distance = true
+        -- Если настроек нет, выключаем ESP
+        Esp.Enabled = false
     end
     
     for plr, _ in pairs(Esp.Objects) do
