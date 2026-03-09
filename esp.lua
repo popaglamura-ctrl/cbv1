@@ -2,7 +2,7 @@
    CounterBlox v1 - ESP (адаптированный из Hexagon)
 --]]
 
-if _G.CBv1.Loaded.ESP then return end
+if _G.CBv1.Loaded.ESP then return end  -- ← ИСПРАВЛЕНО: ESP заглавными
 _G.CBv1.Loaded.ESP = true
 
 local Players = game:GetService("Players")
