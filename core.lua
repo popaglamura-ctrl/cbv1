@@ -26,10 +26,18 @@ _G.CBv1 = {
             Name = true,
             Health = true,
             Distance = true,
+            Weapons = false,
+            Tracers = false,
             TeamCheck = true,
             BoxColor = Color3.fromRGB(255, 100, 100),
-            BoxWidth = 60,
-            BoxHeight = 100
+            TeamColor = Color3.fromRGB(0, 255, 0),
+            UseTeamColor = false,
+            ShowTeam = true,
+            BoxShift = 0,
+            BoxSize = Vector3.new(4, 6, 0),
+            FaceCamera = true,
+            Thickness = 1,
+            AttachShift = 1
         },
         Aimbot = {
             Enabled = false,
@@ -46,5 +54,3 @@ _G.CBv1 = {
 }
 
 print("✅ [CBv1] Core loaded - end")
-print("CBv1 создан:", _G.CBv1 ~= nil)
-print("ESP настройки:", _G.CBv1.Settings.ESP ~= nil)
